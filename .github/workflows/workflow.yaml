@@ -35,9 +35,6 @@ jobs:
       - name: Update NPM
         run: npm install -g npm@10
 
-      - name: Clear Prepare Script
-        run: npm set-script prepare ""
-
       - name: Install dependencies
         run: npm ci
 
