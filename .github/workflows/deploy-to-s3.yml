@@ -23,6 +23,7 @@ on:
         required: true
       S3_ORIGIN_BUCKET:
         required: true
+  workflow_dispatch:
 
 jobs:
   build:
