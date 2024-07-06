@@ -57,14 +57,6 @@ jobs:
         run: terraform validate -no-color
         working-directory: ${{env.TERRAFORM_WORKING_DIR}}
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: ${{secrets.AWS_DEFAULT_REGION}}
-
       - name: Terraform Apply
         id: apply
         run: terraform apply -auto-approve
@@ -98,6 +90,14 @@ jobs:
       - name: Build NextJS static site
         run: ./.github/scripts/build.sh
         shell: bash
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{secrets.AWS_DEFAULT_REGION}}
 
       - name: Deploy
         run: ./.github/scripts/deploy.sh ${{vars.AWS_S3_BUCKET_NAME}}
