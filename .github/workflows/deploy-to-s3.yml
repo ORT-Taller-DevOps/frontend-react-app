@@ -29,7 +29,11 @@ jobs:
       matrix:
         terraform_version: ["1.9.1"]
 
-    steps:    
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 5
+
       - uses: hashicorp/setup-terraform@v3
         env:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
