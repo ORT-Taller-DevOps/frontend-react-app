@@ -28,21 +28,23 @@ resource "aws_s3_bucket" "s3" {
 
 resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
   bucket   = var.aws_s3_bucket_name
-  
+  provider = aws.aws_provider
+
   index_document {
     suffix = "index.html"
   }
 }
 
-
 resource "aws_s3_bucket_public_access_block" "s3_access_block" {
-  bucket = var.aws_s3_bucket_name
+  bucket   = var.aws_s3_bucket_name
+  provider = aws.aws_provider
 
   block_public_acls = false
 }
 
 resource "aws_s3_bucket_policy" "s3_policy" {
-  bucket = var.aws_s3_bucket_name
+  bucket   = var.aws_s3_bucket_name
+  provider = aws.aws_provider
 
   policy = <<EOF
     {
