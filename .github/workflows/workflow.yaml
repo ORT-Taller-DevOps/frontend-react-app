@@ -2,7 +2,7 @@ name: Build
 
 on:
   pull_request:
-    type: [opened, edited, synchronize, reopened]
+    types: [opened, edited, synchronize, reopened]
     branches:
       - develop
       - staging
@@ -40,6 +40,6 @@ jobs:
 
       # TODO Run linters
 
-      - name: Build NextJS site
+      - name: Build
         run: ./.github/scripts/build.sh
         shell: bash

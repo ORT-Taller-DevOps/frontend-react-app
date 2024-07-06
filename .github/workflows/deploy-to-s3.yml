@@ -1,7 +1,7 @@
 # This workflow is written specifically for Jam3/nextjs-boilerplate
 # It uploads all contents inside the ./out/ folder generated on build:prod:static process to an AWS S3 account
 
-name: Github Action S3 Deploy
+name: Deploy to S3 Bucket
 
 on:
   workflow_call:
@@ -24,9 +24,51 @@ on:
       S3_ORIGIN_BUCKET:
         required: true
   workflow_dispatch:
+env:
+  tf_working_dir: "./terraform"
+  s3_bucket_name: ${{vars.AWS_ACCOUNT_ID}} + "-frontend-react-app"
 
 jobs:
+  create-s3-bucket:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        terraform_version: ["1.9.1"]
+
+    steps:    
+      - uses: hashicorp/setup-terraform@v3
+        env:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws_region: ${{vars.AWS_REGION}}
+          aws_profile: ${{vars.AWS_PROFILE}}
+          aws_s3_bucket_name: $s3_bucket_name
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        working-directory: $tf_working_dir
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+        working-directory: $tf_working_dir
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+        working-directory: $tf_working_dir
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve
+        working-directory: $tf_working_dir
+      
   build:
+    needs: [create-s3-bucket]
     runs-on: ubuntu-latest
 
     strategy:
@@ -47,9 +89,6 @@ jobs:
       - name: Update NPM
         run: npm install -g npm@8
 
-      - name: Clear Prepare Script
-        run: npm set-script prepare ""
-
       - name: Install dependencies
         run: npm ci
 
@@ -59,7 +98,6 @@ jobs:
         env:
           CI_ENV: ${{ inputs.CI_ENV }}
           CONTENTFUL_ENVIRONMENT: ${{ inputs.CONTENTFUL_ENVIRONMENT }}
-          S3_ORIGIN_BUCKET: ${{ secrets.S3_ORIGIN_BUCKET }}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -69,8 +107,6 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{secrets.AWS_DEFAULT_REGION}}
 
-      - name: S3 Deploy
-        run: ./.github/scripts/deploy.sh
+      - name: Deploy
+        run: ./.github/scripts/deploy.sh $s3_bucket_name
         shell: bash
-        env:
-          S3_ORIGIN_BUCKET: ${{ secrets.S3_ORIGIN_BUCKET }}
