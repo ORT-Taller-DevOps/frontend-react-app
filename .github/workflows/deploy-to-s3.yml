@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
 env:
   TERRAFORM_WORKING_DIR: "terraform"
-  S3_BUCKET_NAME: ${{vars.AWS_ACCOUNT_ID}} + "-frontend-react-app"
+  S3_BUCKET_NAME: "${{vars.AWS_ACCOUNT_ID}}-frontend-react-app"
 
 jobs:
   create-s3-bucket:
