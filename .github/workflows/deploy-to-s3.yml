@@ -5,13 +5,6 @@ name: Deploy to S3 Bucket
 
 on:
   workflow_call:
-    inputs:
-      CI_ENV:
-        required: true
-        type: string
-      CONTENTFUL_ENVIRONMENT:
-        required: true
-        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -25,8 +18,8 @@ on:
         required: true
   workflow_dispatch:
 env:
-  tf_working_dir: "./terraform"
-  s3_bucket_name: ${{vars.AWS_ACCOUNT_ID}} + "-frontend-react-app"
+  TERRAFORM_WORKING_DIR: "./terraform"
+  S3_BUCKET_NAME: ${{vars.AWS_ACCOUNT_ID}} + "-frontend-react-app"
 
 jobs:
   create-s3-bucket:
@@ -44,28 +37,28 @@ jobs:
           aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws_region: ${{vars.AWS_REGION}}
           aws_profile: ${{vars.AWS_PROFILE}}
-          aws_s3_bucket_name: $s3_bucket_name
+          aws_s3_bucket_name: ${{env.S3_BUCKET_NAME}}
 
       - name: Terraform fmt
         id: fmt
         run: terraform fmt -check
-        working-directory: $tf_working_dir
+        working-directory: ${{env.TERRAFORM_WORKING_DIR}}
         continue-on-error: true
 
       - name: Terraform Init
         id: init
         run: terraform init
-        working-directory: $tf_working_dir
+        working-directory: ${{env.TERRAFORM_WORKING_DIR}}
 
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
-        working-directory: $tf_working_dir
+        working-directory: ${{env.TERRAFORM_WORKING_DIR}}
 
       - name: Terraform Apply
         id: apply
         run: terraform apply -auto-approve
-        working-directory: $tf_working_dir
+        working-directory: ${{env.TERRAFORM_WORKING_DIR}}
       
   build:
     needs: [create-s3-bucket]
@@ -95,9 +88,6 @@ jobs:
       - name: Build NextJS static site
         run: ./.github/scripts/build.sh
         shell: bash
-        env:
-          CI_ENV: ${{ inputs.CI_ENV }}
-          CONTENTFUL_ENVIRONMENT: ${{ inputs.CONTENTFUL_ENVIRONMENT }}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -108,5 +98,5 @@ jobs:
           aws-region: ${{secrets.AWS_DEFAULT_REGION}}
 
       - name: Deploy
-        run: ./.github/scripts/deploy.sh $s3_bucket_name
+        run: ./.github/scripts/deploy.sh ${{env.S3_BUCKET_NAME}}
         shell: bash
