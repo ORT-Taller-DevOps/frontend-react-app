@@ -19,29 +19,32 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "s3" {
-  bucket   = var.aws_s3_bucket_name
-  provider = aws.aws_provider
+  bucket        = var.aws_s3_bucket_name
+  provider      = aws.aws_provider
   force_destroy = true
 }
 
 resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
-  bucket   = var.aws_s3_bucket_name
-  provider = aws.aws_provider
+  depends_on = [aws_s3_bucket.s3]
+  bucket     = var.aws_s3_bucket_name
+  provider   = aws.aws_provider
   index_document {
     suffix = "index.html"
   }
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_access_block" {
+  depends_on        = [aws_s3_bucket.s3]
   bucket            = var.aws_s3_bucket_name
   provider          = aws.aws_provider
   block_public_acls = false
 }
 
 resource "aws_s3_bucket_policy" "s3_policy" {
-  bucket   = var.aws_s3_bucket_name
-  provider = aws.aws_provider
-  policy   = <<EOF
+  depends_on = [aws_s3_bucket.s3]
+  bucket     = var.aws_s3_bucket_name
+  provider   = aws.aws_provider
+  policy     = <<EOF
     {
       "Version": "2012-10-17",
       "Statement": [
