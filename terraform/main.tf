@@ -23,14 +23,6 @@ resource "aws_s3_bucket" "s3" {
   provider = aws.aws_provider
 }
 
-resource "aws_s3_bucket_versioning" "s3_versioning" {
-  bucket   = var.aws_s3_bucket_name
-  provider = aws.aws_provider
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
 resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
   bucket   = var.aws_s3_bucket_name
   provider = aws.aws_provider

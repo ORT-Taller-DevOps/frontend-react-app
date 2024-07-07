@@ -41,6 +41,10 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
 
+      - name: Terraform destroy
+        id: destroy
+        run: terraform destroy
+
       - name: Terraform fmt
         id: fmt
         run: terraform fmt -check
