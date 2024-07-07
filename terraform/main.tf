@@ -21,6 +21,7 @@ provider "aws" {
 resource "aws_s3_bucket" "s3" {
   bucket   = var.aws_s3_bucket_name
   provider = aws.aws_provider
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
