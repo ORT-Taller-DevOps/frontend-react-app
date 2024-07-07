@@ -64,6 +64,7 @@ jobs:
         id: apply
         run: terraform apply -auto-approve
         working-directory: ${{env.TERRAFORM_WORKING_DIR}}
+        continue-on-error: true
       
   build:
     needs: [create-s3-bucket]
