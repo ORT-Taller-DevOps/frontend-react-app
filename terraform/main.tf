@@ -34,10 +34,10 @@ resource "aws_s3_bucket_website_configuration" "s3" {
 }
 
 resource "aws_s3_bucket_public_access_block" "s3" {
-  depends_on        = [aws_s3_bucket.s3]
-  bucket            = var.aws_s3_bucket_name
-  provider          = aws.aws_provider
-  block_public_acls = false
+  depends_on          = [aws_s3_bucket.s3]
+  bucket              = var.aws_s3_bucket_name
+  provider            = aws.aws_provider
+  block_public_acls   = false
   block_public_policy = false
 }
 
