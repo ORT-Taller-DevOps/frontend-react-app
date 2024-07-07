@@ -44,10 +44,6 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform destroy
-        id: destroy
-        run: terraform destroy
-
       - name: Terraform fmt
         id: fmt
         run: terraform fmt -check
@@ -63,6 +59,10 @@ jobs:
         id: validate
         run: terraform validate -no-color
         working-directory: ${{env.TERRAFORM_WORKING_DIR}}
+
+      - name: Terraform destroy
+        id: destroy
+        run: terraform destroy
 
       - name: Terraform Apply
         id: apply
