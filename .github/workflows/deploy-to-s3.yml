@@ -16,6 +16,9 @@ on:
         required: true
       S3_ORIGIN_BUCKET:
         required: true
+  push: 
+    branches:
+      - main
   workflow_dispatch:
 env:
   TERRAFORM_WORKING_DIR: "terraform"
