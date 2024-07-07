@@ -24,7 +24,7 @@ resource "aws_s3_bucket" "s3" {
   force_destroy = true
 }
 
-resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
+resource "aws_s3_bucket_website_configuration" "s3" {
   depends_on = [aws_s3_bucket.s3]
   bucket     = var.aws_s3_bucket_name
   provider   = aws.aws_provider
@@ -33,7 +33,7 @@ resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "s3_access_block" {
+resource "aws_s3_bucket_public_access_block" "s3" {
   depends_on        = [aws_s3_bucket.s3]
   bucket            = var.aws_s3_bucket_name
   provider          = aws.aws_provider
@@ -41,7 +41,7 @@ resource "aws_s3_bucket_public_access_block" "s3_access_block" {
 }
 
 resource "aws_s3_bucket_policy" "s3_policy" {
-  depends_on = [aws_s3_bucket.s3]
+  depends_on = [aws_s3_bucket_public_access_block.s3]
   bucket     = var.aws_s3_bucket_name
   provider   = aws.aws_provider
   policy     = <<EOF
