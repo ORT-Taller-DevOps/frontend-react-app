@@ -4,6 +4,7 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.16"
     }
+
   }
 
   required_version = ">= 1.2.0"
@@ -20,33 +21,34 @@ provider "aws" {
 resource "aws_s3_bucket" "s3" {
   bucket   = var.aws_s3_bucket_name
   provider = aws.aws_provider
+}
 
-  tags = {
-    Name = "Frontend React App"
+resource "aws_s3_bucket_versioning" "s3_versioning" {
+  bucket   = var.aws_s3_bucket_name
+  provider = aws.aws_provider
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
 resource "aws_s3_bucket_website_configuration" "s3_website_configuration" {
   bucket   = var.aws_s3_bucket_name
   provider = aws.aws_provider
-
   index_document {
     suffix = "index.html"
   }
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_access_block" {
-  bucket   = var.aws_s3_bucket_name
-  provider = aws.aws_provider
-
+  bucket            = var.aws_s3_bucket_name
+  provider          = aws.aws_provider
   block_public_acls = false
 }
 
 resource "aws_s3_bucket_policy" "s3_policy" {
   bucket   = var.aws_s3_bucket_name
   provider = aws.aws_provider
-
-  policy = <<EOF
+  policy   = <<EOF
     {
       "Version": "2012-10-17",
       "Statement": [
