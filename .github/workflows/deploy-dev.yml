@@ -21,11 +21,7 @@ env:
   ENVIRONMENT: "dev"
 
 jobs:
-  create-s3-bucket:
-    runs-on: ubuntu-latest
-
   build:
-    needs: [create-s3-bucket]
     runs-on: ubuntu-latest
 
     strategy:
