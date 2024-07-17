@@ -1,4 +1,4 @@
-name: '[STAGING] Deploy to S3 Bucket'
+name: "[STAGING] Deploy to S3 Bucket"
 
 on:
   workflow_call:
@@ -18,7 +18,7 @@ on:
       - release/*
   workflow_dispatch:
 env:
-  ENVIRONMENT: 'stg'
+  ENVIRONMENT: "stg"
 
 jobs:
   create-s3-bucket:
@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Update NPM
         run: npm install -g npm@8
@@ -62,5 +62,5 @@ jobs:
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Deploy
-        run: './.github/scripts/deploy.sh ${{ vars.AWS_S3_BUCKET_NAME }}-${{ env.ENVIRONMENT }}'
+        run: "./.github/scripts/deploy.sh ${{ vars.AWS_S3_BUCKET_NAME }}-${{ env.ENVIRONMENT }}"
         shell: bash
